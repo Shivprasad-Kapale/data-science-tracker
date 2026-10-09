@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f4">
+  <meta name="description" content="A shared Data Science course syllabus and progress tracker for learners and their mentor.">
+  <title>Data Science Course</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.28.4/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 0; background: #f7f8f4; color: #30362f; font: 14px "DM Sans", sans-serif; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #7ca183; outline-offset: 2px; }
+    .brand { display:flex; align-items:center; gap:9px; font-size:20px; font-weight:700; letter-spacing:-1px; }
+    .brand > span:last-child { font-size:15px;letter-spacing:-.4px;white-space:nowrap; }
+    .brand-mark { width:31px;height:31px;border-radius:9px;background:#e7efe5;color:#4e7759;display:grid;place-items:center;font-size:17px; }
+    .wrap { min-height:100vh; display:flex; }
+    .sidebar { width:245px; flex:none; background:white; border-right:1px solid #e9ebe5; padding:25px 16px 14px; display:flex; flex-direction:column; }
+    .mobile-menu-button,.mobile-scrim { display:none; }
+    .side-label { color:#a0a59d;font-size:9px;letter-spacing:1.3px;font-weight:700;margin:29px 9px 10px; }
+    .workspace { padding:11px;border:1px solid #ebede7;border-radius:8px;display:flex;align-items:center;gap:10px; }
+    .workspace-mark { width:30px;height:30px;border-radius:8px;background:#edf3ed;color:#5b8061;display:grid;place-items:center;font-family:Georgia,serif;font-weight:bold; }
+    .workspace small,.who small { display:block;color:#999e97;font-size:10px;margin-top:2px; }
+    .workspace strong,.who strong { font-size:11px;font-weight:600; }
+    .nav { margin-top:8px;display:grid;gap:4px; }
+    .nav button,.module-nav button { border:0;background:transparent;text-align:left;color:#757b73;border-radius:6px;padding:10px; }
+    .nav button:hover,.module-nav button:hover { background:#f4f6f1; }
+    .nav .active { background:#eff4ed;color:#477353;font-weight:600; }
+    .module-nav { display:grid;gap:2px;max-height:calc(100vh - 370px);overflow-y:auto;align-content:start; }
+    .module-nav button { padding:8px 9px;font-size:10px;display:flex;gap:9px;align-items:center; }
+    .dot { width:8px;height:8px;border-radius:3px;background:#88ad90;flex:none; }
+    .dot-blue { background:#8da7ce }.dot-amber { background:#d9b36c }.dot-rose { background:#ce9290 }.dot-purple { background:#ab97c7 }.dot-teal { background:#79aaa2 }
+    .dot.blue,.card-icon.blue { background:#edf1f8;color:#6582ae }.dot.amber,.card-icon.amber { background:#f7f1e5;color:#a58141 }.dot.rose,.card-icon.rose { background:#f7eeec;color:#ac7774 }.dot.purple,.card-icon.purple { background:#f1edf6;color:#846fa6 }.dot.teal,.card-icon.teal { background:#eaf2f0;color:#56877e }.dot.mint,.card-icon.mint { background:#eaf2e9;color:#5c8867 }
+    .sidebar-bottom { margin-top:auto; }
+    .tip { background:#f5f7f1;border-radius:8px;padding:12px;color:#777f72;font-size:10px;line-height:1.6;margin-bottom:13px; }
+    .who { display:flex;align-items:center;gap:9px;border-top:1px solid #eceee9;padding:13px 2px 0; }
+    .avatar { width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#e4eee2;color:#4d7257;font-size:11px;font-weight:bold;flex:none; }
+    .avatar-lavender { background:#eee8f4;color:#79648d }.avatar-peach { background:#f5e9dc;color:#986c51 }
+    .logout { margin-left:auto;border:0;background:transparent;color:#888f86;padding:7px; }
+    .main { flex:1;min-width:0; }
+    .topbar { height:59px;background:#ffffffb8;border-bottom:1px solid #e9ebe5;padding:0 4%;display:flex;align-items:center;justify-content:space-between;color:#858b83;font-size:11px; }
+    .topbar-right { display:flex;align-items:center;gap:14px; }
+    .content { max-width:1120px;margin:auto;padding:38px 4% 20px; }
+    .eyebrow { color:#899188;font-size:9px;font-weight:700;letter-spacing:1.4px; }
+    h1 { font:400 clamp(28px,3vw,38px)/1.2 "DM Serif Display", Georgia, serif;margin:9px 0 6px; }
+    .muted { color:#898e87;font-size:12px;margin:0; }
+    .welcome { display:flex;justify-content:space-between;align-items:end;gap:14px; }
+    .pill { border:1px solid #e8ebe4;border-radius:20px;background:white;padding:8px 11px;color:#758071;font-size:10px;white-space:nowrap; }
+    .summary { display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin-top:27px; }
+    .summary-card { background:white;border:1px solid #e9ebe5;border-radius:9px;padding:18px;min-height:113px; }
+    .summary-card.progress { background:#f0f5ee;border-color:#e5ede1; }
+    .sum-label { color:#92988f;font-size:9px;letter-spacing:1px;font-weight:700; }
+    .sum-value { font-size:25px;font-weight:600;margin-top:10px; }
+    .sum-value small { font-size:11px;color:#888e86;font-weight:400; }
+    .sum-note { font-size:9px;color:#939990;margin-top:5px; }
+    .bar { height:4px;background:#e0e8dc;border-radius:5px;margin-top:13px;overflow:hidden; }
+    .bar span { height:100%;display:block;background:#7da384;border-radius:5px; }
+    .section-head { display:flex;align-items:end;justify-content:space-between;gap:13px;margin:36px 0 15px; }
+    h2 { font-size:18px;margin:5px 0 0;font-weight:600; }
+    .tools { display:flex;align-items:center;gap:10px; }
+    .search { border:1px solid #e5e8e1;border-radius:6px;background:white;padding:8px 10px;width:190px;font-size:10px; }
+    .cards { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
+    .card { background:white;border:1px solid #e8ebe4;border-radius:8px;padding:16px; }
+    .card-head { display:flex;gap:10px;align-items:flex-start; }
+    .card-icon { width:34px;height:34px;border-radius:8px;background:#eaf2e9;color:#5c8867;display:grid;place-items:center;flex:none;font-size:16px; }
+    .card-title { flex:1;min-width:0; }
+    .card-title small { font-size:8px;letter-spacing:1px;color:#a0a49d;font-weight:700; }
+    .card-title h3 { font-size:13px;margin:3px 0;font-weight:600; }
+    .card-title p { color:#999d97;font-size:10px;margin:0; }
+    .card .bar { height:3px;background:#eff1ec;margin:13px 0 5px; }
+    .card .bar span { background:#83a78a; }
+    .topic { display:flex;align-items:center;gap:9px;min-height:37px;border-bottom:1px solid #f0f1ed;font-size:11px;color:#60665e; }
+    .topic:last-child { border-bottom:0; }
+    .topic input { accent-color:#6f9978;width:15px;height:15px;margin:0; }
+    .topic.done span { color:#9da29b;text-decoration:line-through; }
+    .topic span { flex:1; }
+    .small-button { border:0;background:transparent;color:#858d82;padding:5px;font-size:12px; }
+    .small-button:hover { color:#a34d46; }
+    .add-row { display:flex;gap:5px;margin-top:8px; }
+    .add-row input,.edit-input { min-width:0;flex:1;padding:7px;border:1px solid #dce5d9;border-radius:5px;font-size:11px; }
+    .action { border:0;border-radius:5px;background:#eff4ed;color:#52785b;padding:6px 9px;font-size:11px; }
+    .login-page { min-height:100vh;display:grid;place-items:center;padding:24px; }
+    .login-card { width:min(100%,410px);background:white;border:1px solid #e8ebe4;border-radius:12px;padding:30px;box-shadow:0 14px 45px #3643330f; }
+    .login-card h1 { margin:14px 0 8px; }
+    .account-list { display:grid;gap:7px;margin:17px 0; }
+    .account { width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:9px;border:1px solid #e9ebe5;border-radius:7px;background:white;color:#444a42; }
+    .account.selected { border-color:#99b197;background:#f7faf6; }
+    .account span:nth-child(2) { flex:1;font-size:11px; }
+    .account small { display:block;color:#969b94;font-size:9px;margin-top:2px; }
+    .field-label { display:block;font-size:10px;font-weight:600;margin:15px 0 7px; }
+    .submit { width:100%;margin-top:14px;padding:11px;border:0;border-radius:6px;background:#47765e;color:white;font-size:11px;font-weight:600; }
+    .submit:disabled { opacity:.55;cursor:not-allowed; }
+    .demo { font-size:9px;color:#92988f;border-top:1px solid #eff0ec;margin-top:16px;padding-top:13px;line-height:1.7; }
+    .error { color:#a24f46;font-size:10px; }
+    .empty { background:white;border:1px dashed #dfe2db;border-radius:8px;padding:40px;text-align:center;color:#858b83;font-size:12px; }
+    .comparison-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 26px; }
+    .comparison-card,.chart-card { background:white;border:1px solid #e8ebe4;border-radius:9px;padding:17px; }
+    .comparison-card-head { display:flex;align-items:center;gap:9px; }
+    .comparison-card-head strong { font-size:13px; }
+    .comparison-percent { margin-left:auto;font-size:19px;font-weight:600;color:#52785b; }
+    .comparison-modules { display:grid;gap:11px;margin-top:15px; }
+    .comparison-module { display:grid;grid-template-columns:minmax(90px,1fr) minmax(90px,1.5fr) 36px;align-items:center;gap:9px;font-size:10px;color:#73796f; }
+    .comparison-module .bar { margin:0;height:5px; }
+    .analytics-grid { display:grid;grid-template-columns:1fr 1.4fr;gap:12px;margin:18px 0; }
+    .chart-card h3 { font-size:12px;margin:0 0 3px;font-weight:600; }
+    .chart-card p { margin:0;color:#999e97;font-size:10px; }
+    .chart-wrap { position:relative;height:245px;margin-top:15px; }
+    .chart-wrap canvas { width:100%!important;height:100%!important; }
+    .chart-legend { display:flex;gap:15px;margin-top:10px;color:#858b83;font-size:10px; }
+    .legend-dot { display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:#72977b; }
+    .legend-prajakta { background:#a28ab6; }
+    .progress-intro { display:flex;align-items:end;justify-content:space-between;gap:12px;margin:27px 0 10px; }
+    .read-only-tag { border-radius:20px;background:#f3f0e7;color:#85734e;padding:6px 9px;font-size:9px;white-space:nowrap; }
+    .module-nav-group { display:grid; }
+    .module-nav button { width:100%; }
+    .module-subtopics { display:grid;gap:1px;padding:1px 0 5px 28px; }
+    .module-subtopics button { border:0;border-left:1px solid #e7ebe4;border-radius:0;background:transparent;color:#858c82;cursor:pointer;text-align:left;padding:5px 7px;font-size:9px;line-height:1.45; }
+    .module-subtopics button:hover { border-left-color:#86a88c;color:#4f7658;background:#f7f8f5; }
+    .module-title-button { border:0;background:transparent;padding:0;text-align:left;color:inherit;font:inherit;font-size:13px;font-weight:600;cursor:pointer; }
+    .module-title-button:hover { color:#4c7958; }
+    .theme-button { display:flex;align-items:center;gap:6px;border:1px solid #e7eae3;border-radius:18px;padding:6px 10px;color:#727a70;background:white;font-size:10px;white-space:nowrap; }
+    .theme-button:hover { color:#416d53;border-color:#d4dfd1; }
+    .quote-strip { min-height:38px;display:flex;align-items:center;gap:9px;padding:7px 4%;color:#687b67;background:#f0f4ec;border-bottom:1px solid #e6ece2;font-size:10px; }
+    .quote-strip .quote-text { flex:1; }
+    .quote-label { color:#959e91;font-size:8px;font-weight:700;letter-spacing:1px;white-space:nowrap; }
+    .module-topics { display:block; }
+    body[data-theme="dark"] { background:#171b18;color:#e4e8e2; }
+    body[data-theme="dark"] .sidebar,body[data-theme="dark"] .workspace,body[data-theme="dark"] .summary-card,body[data-theme="dark"] .card,body[data-theme="dark"] .comparison-card,body[data-theme="dark"] .chart-card,body[data-theme="dark"] .login-card,body[data-theme="dark"] .pill,body[data-theme="dark"] .search,body[data-theme="dark"] .account,body[data-theme="dark"] .theme-button { background:#222824;color:#e1e6df;border-color:#38413a; }
+    body[data-theme="dark"] .topbar { background:#1d231f;border-color:#343c35;color:#b4bcb3; }
+    body[data-theme="dark"] .quote-strip { color:#cad7c4;background:#293329;border-color:#3c473b; }
+    body[data-theme="dark"] .progress.summary-card,body[data-theme="dark"] .tip { background:#293329;border-color:#3c473b; }
+    body[data-theme="dark"] .workspace-mark,body[data-theme="dark"] .brand-mark,body[data-theme="dark"] .nav .active { background:#303d32;color:#b7d1b5; }
+    body[data-theme="dark"] .nav button,body[data-theme="dark"] .module-nav button,body[data-theme="dark"] .module-subtopics button,body[data-theme="dark"] .module-title-button,body[data-theme="dark"] .card-title h3,body[data-theme="dark"] h1,body[data-theme="dark"] h2,body[data-theme="dark"] .card-title,body[data-theme="dark"] .topic,body[data-theme="dark"] .who strong,body[data-theme="dark"] .workspace strong,body[data-theme="dark"] .comparison-card-head strong { color:#e1e6df; }
+    body[data-theme="dark"] .module-title-button:hover,body[data-theme="dark"] .module-subtopics button:hover { color:#b7d1b5;background:#2c342e; }
+    body[data-theme="dark"] .muted,body[data-theme="dark"] .card-title p,body[data-theme="dark"] .sum-note,body[data-theme="dark"] .card-title small { color:#a6afa5; }
+    body[data-theme="dark"] .welcome-badge,body[data-theme="dark"] .observe-picker,body[data-theme="dark"] .observe-picker select { background:#222824;color:#ccd4ca;border-color:#38413a; }
+    body[data-theme="dark"] .topic,body[data-theme="dark"] .who { border-color:#343c35; }
+    body[data-theme="dark"] .topic.done span { color:#8b9689; }
+    body[data-theme="dark"] .bar { background:#39433a; }
+    body[data-theme="dark"] .search,body[data-theme="dark"] input,body[data-theme="dark"] select { color:#e1e6df; }
+    body[data-theme="dark"] .account.selected { background:#293329;border-color:#71876e; }
+    body[data-theme="dark"] .comparison-module { color:#c1c9bf; }
+    body[data-theme="dark"] .chart-card p { color:#a6afa5; }
+    body[data-theme="dark"] .chart-card { color:#e1e6df; }
+    @media(max-width:760px) {
+      .sidebar { position:fixed;z-index:6;inset:0 auto 0 0;width:min(285px,calc(100vw - 44px));height:100vh;height:100dvh;overflow-y:auto;transform:translateX(-102%);transition:transform .2s ease;box-shadow:10px 0 30px #1e281e14; }
+      .sidebar.sidebar-open { transform:translateX(0); }
+      .mobile-scrim { display:block;position:fixed;z-index:5;inset:0;border:0;background:#21292140; }
+      .mobile-menu-button { display:grid;place-items:center;flex:none;width:32px;height:32px;border:0;border-radius:5px;background:transparent;color:#687068;font-size:20px; }
+      .topbar { gap:8px;padding:0 15px; }
+      .topbar > span:first-child { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+      .topbar-right { flex:none;gap:9px; }
+      .topbar-right > span { display:none; }
+      .content { padding:28px 20px; }
+      .summary { gap:8px; }
+      .summary-card { padding:13px; }
+      .cards { gap:8px; }
+      .card { padding:12px; }
+    }
+    @media(max-width:580px) {
+      .quote-strip { padding:7px 15px; }
+      .quote-label { display:none; }
+      .topbar-right { gap:5px; }
+      .theme-button span { display:none; }
+      .wrap { display:block; }
+      .content { padding:23px 15px; }
+      .topbar { height:48px;padding:0 10px; }
+      .welcome { align-items:flex-start; }
+      .welcome .pill { display:none; }
+      .summary { grid-template-columns:1fr 1fr;margin-top:19px; }
+      .summary-card.progress { grid-column:1/-1; }
+      .section-head { align-items:flex-start;flex-direction:column;margin-top:28px; }
+      .tools,.search { width:100%; }
+      .cards,.comparison-grid,.analytics-grid { grid-template-columns:1fr; }
+      .comparison-module { grid-template-columns:minmax(0,1fr) minmax(65px,.9fr) 32px;gap:7px; }
+      .login-card { padding:25px 20px; }
+      .chart-wrap { height:230px; }
+    }
+    @media(max-width:380px) {
+      .content { padding-right:12px;padding-left:12px; }
+      .topbar { gap:5px; }
+      .topbar > span:first-child { font-size:10px; }
+      .welcome h1 { font-size:26px; }
+      .summary-card { padding:11px; }
+      .comparison-module { grid-template-columns:minmax(0,1fr) minmax(52px,.7fr) 29px;gap:5px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { useEffect, useMemo, useState } = React;
+    const users = [
+      { id: "shiv", name: "Shiv", role: "Learner", initials: "S", tone: "" },
+      { id: "prajakta", name: "Prajakta", role: "Learner", initials: "P", tone: "avatar-lavender" },
+      { id: "teacher", name: "Teacher", role: "Mentor", initials: "T", tone: "avatar-peach" },
+    ];
+    const quotes=[
+      "Great things are done by a series of small things brought together. — Vincent van Gogh",
+      "The secret of getting ahead is getting started. — Mark Twain",
+      "It always seems impossible until it’s done. — Nelson Mandela",
+      "Learning never exhausts the mind. — Leonardo da Vinci",
+      "Success is the sum of small efforts, repeated day in and day out. — Robert Collier"
+    ];
+    const starter = [
+      { id:"python",title:"Python Fundamentals & Core Libraries",description:"Learn Python, programming fundamentals, and the core libraries used in data science.",icon:"⌘",color:"",topics:[
+        "Variables & data types: integers, floats, strings, booleans, type casting","Operators: arithmetic, comparison, logical, assignment","Control flow: if, elif, else","Loops: for, while, break, continue, pass","Input/output: print(), input(), formatted strings (f-strings)",
+        "Lists: indexing, slicing, append, extend, pop, sort","Tuples: immutability, packing, unpacking","Dictionaries: key-value pairs, keys(), values(), items(), get()","Sets: union, intersection, difference","Comprehensions: list, dictionary, and set",
+        "User-defined functions: def, positional/keyword/default arguments, *args, **kwargs, return","Lambda functions and functional tools: map(), filter(), reduce()","Built-in functions: len(), range(), zip(), enumerate(), sorted()","Modules & packages: imports, creating modules, __name__ == \"__main__\"",
+        "Classes & objects: __init__, instance attributes, methods","Inheritance: single, multiple, multilevel","Polymorphism: method overloading and overriding","Encapsulation: private and public attributes","File handling: open(), read(), write(), append(), context managers","Exceptions: try, except, else, finally, custom exceptions",
+        "NumPy: arrays, indexing, broadcasting, vectorized operations, mathematical functions","Pandas Series, DataFrames, CSV/Excel loading, loc/iloc, filtering, groupby, merging/joining","Matplotlib: line plots, bar charts, histograms, scatter plots, subplots","Seaborn: statistical plots, heatmaps, pairplots, boxplots"
+      ] },
+      { id:"database",title:"SQL & Database Management",description:"Understand relational databases and query, transform, and optimize data with SQL.",icon:"▦",color:"amber",topics:[
+        "Relational concepts: tables, rows, columns, primary keys, foreign keys","Database design: normalization (1NF, 2NF, 3NF), ER diagrams","SQL vs NoSQL: when to use each, overview of NoSQL databases",
+        "Basic queries: SELECT, FROM, WHERE, DISTINCT, LIMIT","Filtering: AND, OR, NOT, IN, BETWEEN, LIKE, IS NULL","Sorting: ORDER BY (ASC/DESC), multiple columns","Aggregation: COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING",
+        "Joins: INNER, LEFT, RIGHT, FULL OUTER, CROSS, self-joins","Subqueries: correlated and non-correlated, EXISTS, ANY, ALL","Common Table Expressions: WITH clause, recursive CTEs","Window functions: ROW_NUMBER(), RANK(), DENSE_RANK(), LAG(), LEAD(), SUM() OVER()","Set operations: UNION, UNION ALL, INTERSECT, EXCEPT","Data manipulation: INSERT, UPDATE, DELETE, CREATE TABLE, ALTER TABLE",
+        "Indexing: clustered vs non-clustered indexes, when to use indexes","Query optimization: execution plans, avoiding full table scans","Transactions: ACID properties, COMMIT, ROLLBACK"
+      ] },
+      { id:"statistics",title:"Mathematics & Statistics for Data Science",description:"Build the mathematical backbone for understanding and developing machine learning models.",icon:"∑",color:"purple",topics:[
+        "Central tendency: mean, median, mode","Dispersion: range, variance, standard deviation, interquartile range (IQR)","Data distributions: histograms, boxplots, skewness, kurtosis",
+        "Probability theory: sample spaces, events, conditional probability, Bayes' theorem","Discrete distributions: Binomial, Poisson","Continuous distributions: Normal, Uniform, Exponential","Random variables: expected value, variance, covariance, correlation",
+        "Sampling: simple random, stratified, cluster sampling","Central Limit Theorem: sampling distributions, standard error","Confidence intervals: means and proportions","Hypothesis testing: null/alternative hypotheses, Type I/II errors, p-values","Statistical tests: t-tests, chi-square tests, ANOVA",
+        "Linear algebra: vectors, matrices, matrix operations, dot products, eigenvalues/eigenvectors","Calculus: derivatives, partial derivatives, gradients, chain rule, optimization basics"
+      ] },
+      { id:"data-wrangling",title:"Data Wrangling & Exploratory Data Analysis",description:"Clean, transform, and explore data to uncover patterns and insights.",icon:"▤",color:"blue",topics:[
+        "Missing values: imputation and deletion","Data cleaning: duplicate removal, data type conversion","Outlier detection: Z-score, IQR method, robust measures","Data transformation: Min-Max and Standard scaling, normalization, log transformation","Categorical encoding: one-hot, label, ordinal encoding","Feature engineering: interaction terms, polynomial features, binning/discretization",
+        "Univariate analysis: distribution plots, summary statistics, frequency tables","Bivariate analysis: scatter plots, correlation matrices, cross-tabulations","Multivariate analysis: pair plots, heatmaps, 3D scatter plots","Introductory dimensionality reduction: Principal Component Analysis (PCA)"
+      ] },
+      { id:"visualization",title:"Data Visualization & Storytelling",description:"Communicate useful data insights through effective visualizations and narratives.",icon:"▥",color:"rose",topics:[
+        "Matplotlib: customize titles, labels, legends, colors, and save figures","Seaborn: regression, distribution, and categorical plots","Plotly: interactive visualizations, dashboards, 3D plots","Power BI: data import, data modeling, DAX basics, dashboard creation","Tableau: data connections, worksheets, dashboards","Excel: pivot tables, charts, basic statistical functions",
+        "Effective visualization: choosing chart types, color theory, avoiding misleading graphs","Narrative structure: context, key findings, actionable recommendations","Dashboard design: layout, interactivity, KPIs, real-time dashboards"
+      ] },
+      { id:"machine-learning",title:"Classical Machine Learning",description:"Learn core algorithms for supervised and unsupervised learning.",icon:"◎",color:"teal",topics:[
+        "Learning types: supervised, unsupervised, semi-supervised, reinforcement learning","Train/test split: holdout method, k-fold and stratified cross-validation","Bias-variance tradeoff: underfitting, overfitting, L1/L2 regularization",
+        "Linear regression: simple and multiple regression, assumptions, residual analysis","Regularized regression: Ridge (L2), Lasso (L1), Elastic Net","Regression metrics: MSE, RMSE, MAE, R-squared, Adjusted R-squared",
+        "Logistic regression: sigmoid function, odds ratio, decision boundary","k-Nearest Neighbors: distance metrics, choosing k","Decision trees: entropy, Gini impurity, information gain, pruning","Ensembles: Random Forest, Gradient Boosting, XGBoost, bagging, boosting","Support Vector Machines: hyperplanes, linear/RBF/polynomial kernels","Naive Bayes: Gaussian, Multinomial, Bernoulli","Classification metrics: accuracy, precision, recall, F1, ROC-AUC, confusion matrix",
+        "Clustering: K-Means, hierarchical clustering, DBSCAN","Dimensionality reduction: PCA, t-SNE, UMAP","Association rules: Apriori, Market Basket Analysis"
+      ] },
+      { id:"advanced-ml",title:"Advanced Machine Learning & Deep Learning",description:"Explore neural networks and specialist applications in NLP, vision, and time series.",icon:"⌘",color:"mint",topics:[
+        "Perceptrons: single-layer perceptron, ReLU/Sigmoid/Tanh activation functions","Feedforward neural networks: forward propagation, backpropagation, gradient descent","Deep learning regularization: dropout, batch normalization, early stopping",
+        "CNNs: convolution, pooling, padding, stride, image classification","RNNs: LSTM, GRU, sequence modeling","Transformers: attention, BERT, GPT, transfer learning",
+        "Text preprocessing: tokenization, stemming, lemmatization, stopword removal","Text representation: Bag-of-Words, TF-IDF, Word2Vec, GloVe embeddings","NLP tasks: sentiment analysis, named entity recognition, text classification",
+        "Time series components: trend, seasonality, cyclicity, noise","Forecasting: ARIMA, SARIMA, Exponential Smoothing, Prophet","Time series features: lag features, rolling statistics, date-time features"
+      ] },
+      { id:"big-data",title:"Big Data & Cloud Computing",description:"Prepare to process large-scale data in cloud environments.",icon:"▦",color:"amber",topics:[
+        "Hadoop ecosystem: HDFS, MapReduce, YARN","Apache Spark: RDDs, DataFrames, Spark SQL, PySpark","Data warehousing: Snowflake, Redshift, BigQuery concepts",
+        "AWS: S3, EC2, Lambda, SageMaker, Glue","Google Cloud Platform: BigQuery, Dataflow, AI Platform","Microsoft Azure: Azure ML, Blob Storage, Data Factory",
+        "ETL pipelines: extract, transform, load, Airflow orchestration","Data lakes vs data warehouses: architecture and use cases","Streaming data: Kafka, Spark Streaming, real-time analytics"
+      ] },
+      { id:"mlops",title:"MLOps & Model Deployment",description:"Take machine learning models from development into production.",icon:"▤",color:"blue",topics:[
+        "ML APIs: Flask, FastAPI, RESTful endpoints","Containerization: Docker, Docker Compose, containerizing ML models","Cloud deployment: AWS SageMaker, GCP AI Platform, Azure ML",
+        "CI/CD for ML: automated testing, versioning, continuous training","Model monitoring: performance tracking, drift detection, retraining triggers","Version control: Git, GitHub, branching strategies, pull requests",
+        "Explainability: SHAP, LIME, feature importance, partial dependence plots","Fairness and bias: detecting and mitigating bias in ML models"
+      ] },
+      { id:"capstone",title:"Capstone Projects & Portfolio",description:"Bring your skills together in end-to-end projects and a professional portfolio.",icon:"✦",color:"purple",topics:[
+        "Regression projects: house price prediction, sales forecasting","Classification projects: customer churn prediction, fraud detection","NLP projects: sentiment analysis, text summarization, chatbot","Time series projects: stock price forecasting, demand prediction","Recommendation systems: collaborative filtering, content-based filtering",
+        "Problem definition: business understanding, success metrics","Data collection and preparation: sourcing, cleaning, feature engineering","Modeling and evaluation: algorithm selection, hyperparameter tuning, validation","Deployment and presentation: model deployment, report/dashboard, presenting findings",
+        "GitHub portfolio: project documentation, README files, code quality","Kaggle competitions: participation, learning from others","Blog writing: explain projects and insights through technical writing"
+      ] }
+    ].map(m=>({...m,topics:m.topics.map((title,i)=>({id:`${m.id}-${i+1}`,title}))}));
+    const keys={modules:"fieldnotes-syllabus-v2",progress:"fieldnotes-progress-v2",session:"fieldnotes-session-v1",theme:"data-science-course-theme-v1"};
+    function load(key,fallback) { try { const value=localStorage.getItem(key); return value?JSON.parse(value):fallback; } catch(error) { console.warn("Could not read saved tracker data:",error); return fallback; } }
+    function App() {
+      const [user,setUser]=useState(()=>{const saved=load(keys.session,null);if(!saved)return null;const account=users.find(u=>u.id===saved.id);return account?{id:account.id,name:account.name,role:account.role,initials:account.initials,tone:account.tone}:null;});
+      const [modules,setModules]=useState(()=>load(keys.modules,starter));
+      const [progress,setProgress]=useState(()=>load(keys.progress,{}));
+      const [selected,setSelected]=useState(users[0]);
+      const [query,setQuery]=useState("");
+      const [view,setView]=useState(()=>user?.id==="teacher"?"progress":"syllabus");
+      const [viewingStudentId,setViewingStudentId]=useState(()=>user?.id==="prajakta"?"prajakta":"shiv");
+      const [mobileMenu,setMobileMenu]=useState(false);
+      const [theme,setTheme]=useState(()=>load(keys.theme,"light")==="dark"?"dark":"light");
+      const [quoteIndex,setQuoteIndex]=useState(0);
+      const [expandedModules,setExpandedModules]=useState({});
+      const [expandedCards,setExpandedCards]=useState({});
+      const [newTopic,setNewTopic]=useState({});
+      const [editing,setEditing]=useState(null);
+      const [editValue,setEditValue]=useState("");
+      const overallChartRef=React.useRef(null);
+      const moduleChartRef=React.useRef(null);
+      const overallChartInstance=React.useRef(null);
+      const moduleChartInstance=React.useRef(null);
+      const filtered=useMemo(()=>{const q=query.trim().toLowerCase();if(!q)return modules;return modules.flatMap(m=>{const titleMatch=m.title.toLowerCase().includes(q);const topics=titleMatch?m.topics:m.topics.filter(t=>t.title.toLowerCase().includes(q));return topics.length?[{...m,topics}]:[];});},[modules,query]);
+      useEffect(()=>{document.body.dataset.theme=theme;localStorage.setItem(keys.theme,JSON.stringify(theme));},[theme]);
+      useEffect(()=>{try{localStorage.removeItem("data-science-course-passwords-v1");}catch(storageError){console.error("Unable to remove the old saved password data.",storageError);}},[]);
+      useEffect(()=>{const timer=window.setInterval(()=>setQuoteIndex(current=>(current+1)%quotes.length),5000);return()=>window.clearInterval(timer);},[]);
+      function toggleTheme(){setTheme(current=>{const next=current==="light"?"dark":"light";document.body.dataset.theme=next;localStorage.setItem(keys.theme,JSON.stringify(next));return next;});}
+      useEffect(()=>{ localStorage.setItem(keys.modules,JSON.stringify(modules)); },[modules]);
+      useEffect(()=>{ localStorage.setItem(keys.progress,JSON.stringify(progress)); },[progress]);
+      useEffect(()=>{
+        if(!user||view!=="progress"||!overallChartRef.current||!moduleChartRef.current||!window.Chart)return;
+        overallChartInstance.current?.destroy();
+        moduleChartInstance.current?.destroy();
+        const students=users.filter(u=>u.id!=="teacher");
+        const overallValues=students.map(student=>{
+          const completed=(progress[student.id]||[]).filter(id=>modules.some(module=>module.topics.some(topic=>topic.id===id))).length;
+          return total?Math.round(completed/total*100):0;
+        });
+        const moduleValues=students.map(student=>modules.map(module=>{
+          const completed=module.topics.filter(topic=>(progress[student.id]||[]).includes(topic.id)).length;
+          return module.topics.length?Math.round(completed/module.topics.length*100):0;
+        }));
+        const colors=["#72977b","#a28ab6"];
+        overallChartInstance.current=new Chart(overallChartRef.current,{type:"bar",data:{labels:students.map(student=>student.name),datasets:[{label:"Syllabus completed",data:overallValues,backgroundColor:colors,borderRadius:7,maxBarThickness:62}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100,ticks:{callback:value=>`${value}%`,stepSize:25},grid:{color:"#eef0eb"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:context=>`${context.parsed.y}% complete`}}}}});
+        moduleChartInstance.current=new Chart(moduleChartRef.current,{type:"radar",data:{labels:modules.map(module=>module.title),datasets:students.map((student,index)=>({label:student.name,data:moduleValues[index],borderColor:colors[index],backgroundColor:index===0?"rgba(114,151,123,.14)":"rgba(162,138,182,.13)",pointBackgroundColor:colors[index],pointRadius:3,borderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:25,backdropColor:"transparent",callback:value=>`${value}%`},grid:{color:"#e9ece6"},angleLines:{color:"#e9ece6"},pointLabels:{color:"#73796f",font:{size:10}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:context=>`${context.dataset.label}: ${context.parsed.r}%`}}}}});
+        return ()=>{overallChartInstance.current?.destroy();moduleChartInstance.current?.destroy();};
+      },[user,view,modules,progress]);
+      function login(event) {
+        event.preventDefault();
+        const session={id:selected.id,name:selected.name,role:selected.role,initials:selected.initials,tone:selected.tone};
+        localStorage.setItem(keys.session,JSON.stringify(session));setUser(session);setViewingStudentId(session.id==="prajakta"?"prajakta":"shiv");setView(session.id==="teacher"?"progress":"syllabus");
+      }
+      function logout(){localStorage.removeItem(keys.session);setUser(null);}
+      if(!user) return <main className="login-page"><form className="login-card" onSubmit={login}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}><div className="brand"><span className="brand-mark">▤</span><span>Data Science Course</span></div><button aria-label={`Switch to ${theme==="light"?"dark":"bright"} theme`} className="theme-button" onClick={toggleTheme} type="button">{theme==="light"?"☾ Dark":"☀ Bright"}</button></div>
+        <h1>A little progress,<br/>every day.</h1><p className="muted">Choose your profile to continue your data science journey.</p>
+        <label className="field-label">Choose your account</label>
+        <div className="account-list">{users.map(u=><button type="button" key={u.id} className={`account ${selected.id===u.id?"selected":""}`} onClick={()=>setSelected(u)}><span className={`avatar ${u.tone}`}>{u.initials}</span><span><strong>{u.name}</strong><small>{u.role}</small></span>{selected.id===u.id?"✓":""}</button>)}</div>
+        <button className="submit" type="submit">Continue as {selected.name} →</button>
+        <p className="demo">No password is required. This demo profile picker does not restrict access to account data.</p>
+      </form></main>;
+      const teacher=user.id==="teacher";
+      const learner=users.find(u=>u.id===viewingStudentId)||user;
+      const viewingPeer=!teacher&&learner.id!==user.id;
+      const done=progress[learner.id]||[];
+      const all=modules.flatMap(m=>m.topics),total=all.length;
+      const completed=all.filter(t=>done.includes(t.id)).length;
+      const percent=total?Math.round(completed/total*100):0;
+      const studentStats=users.filter(u=>u.id!=="teacher").map(student=>{
+        const studentDone=progress[student.id]||[];
+        const studentCompleted=all.filter(topic=>studentDone.includes(topic.id)).length;
+        return {...student,completed:studentCompleted,percent:total?Math.round(studentCompleted/total*100):0,modules:modules.map(module=>{
+          const moduleCompleted=module.topics.filter(topic=>studentDone.includes(topic.id)).length;
+          return {...module,completed:moduleCompleted,percent:module.topics.length?Math.round(moduleCompleted/module.topics.length*100):0};
+        })};
+      });
+      const classAverage=studentStats.length?Math.round(studentStats.reduce((sum,student)=>sum+student.percent,0)/studentStats.length):0;
+      const classCompleted=studentStats.reduce((sum,student)=>sum+student.completed,0);
+      function toggle(topicId){setProgress(current=>{const list=current[user.id]||[];return {...current,[user.id]:list.includes(topicId)?list.filter(id=>id!==topicId):[...list,topicId]};});}
+      function add(moduleId){const title=(newTopic[moduleId]||"").trim();if(!title)return;setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:[...m.topics,{id:`${moduleId}-${Date.now()}`,title}]}:m));setNewTopic(v=>({...v,[moduleId]:""}));}
+      function rename(moduleId,topicId){const title=editValue.trim();if(title)setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:m.topics.map(t=>t.id===topicId?{...t,title}:t)}:m));setEditing(null);}
+      function remove(moduleId,topicId){setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:m.topics.filter(t=>t.id!==topicId)}:m));setProgress(p=>Object.fromEntries(Object.entries(p).map(([id,list])=>[id,list.filter(t=>t!==topicId)])));}
+      return <div className="wrap">
+        <aside className={`sidebar ${mobileMenu?"sidebar-open":""}`}><div className="brand"><span className="brand-mark">▤</span><span>Data Science Course</span></div>
+          <div className="side-label">YOUR WORKSPACE</div><div className="workspace"><span className="workspace-mark">ds</span><span><strong>Data Science</strong><small>Learning path</small></span></div>
+          <div className="side-label">LEARN</div><nav className="nav"><button className={view==="syllabus"?"active":""} onClick={()=>{setView("syllabus");setMobileMenu(false);}}>▤　 Syllabus</button><button className={view==="progress"?"active":""} onClick={()=>{setView("progress");setMobileMenu(false);}}>↗　 {teacher?"Class progress":"Shared progress"} <span style={{float:"right"}}>{teacher&&view==="progress"?classAverage:percent}%</span></button></nav>
+          <div className="side-label">YOUR MODULES</div><nav className="module-nav">{modules.map((m,i)=><div className="module-nav-group" key={m.id}><button aria-expanded={!!expandedModules[m.id]} onClick={()=>setExpandedModules(current=>({...current,[m.id]:!current[m.id]}))}><span className={`dot ${m.color}`}></span>{String(i+1).padStart(2,"0")}　{m.title}</button>{expandedModules[m.id]&&<div className="module-subtopics">{m.topics.map(topic=><button key={topic.id} onClick={()=>{setView("syllabus");setExpandedCards(current=>({...current,[m.id]:true}));setMobileMenu(false);window.requestAnimationFrame(()=>document.getElementById(m.id)?.scrollIntoView({behavior:"smooth",block:"center"}));}}>{topic.title}</button>)}</div>}</div>)}</nav>
+          <div className="sidebar-bottom"><div className="tip">✳　<strong>Small steps count.</strong><br/>　　 Consistency beats cramming, every time.</div><div className="who"><span className={`avatar ${user.tone}`}>{user.initials}</span><span><strong>{user.name}</strong><small>{user.role}</small></span><button className="logout" onClick={logout} title="Sign out">↪</button></div></div>
+        </aside>
+        {mobileMenu&&<button aria-label="Close menu" className="mobile-scrim" onClick={()=>setMobileMenu(false)} type="button"/>}
+        <main className="main"><header className="topbar"><button aria-label="Open menu" aria-expanded={mobileMenu} className="mobile-menu-button" onClick={()=>setMobileMenu(true)} type="button">☰</button><span>Learning path　›　<strong>{view==="progress"?(teacher?"Class progress":"Shared progress"):"Syllabus"}</strong></span><span className="topbar-right">{teacher&&view==="syllabus"&&<label>Viewing　<select aria-label="Choose student progress" value={viewingStudentId} onChange={e=>setViewingStudentId(e.target.value)}>{users.filter(u=>u.id!=="teacher").map(u=><option key={u.id} value={u.id}>{u.name}</option>)}</select>　</label>}<span>◷　Your own pace</span><button aria-label={`Switch to ${theme==="light"?"dark":"bright"} theme`} className="theme-button" onClick={toggleTheme} type="button">{theme==="light"?"☾ Dark":"☀ Bright"}</button><button className="logout" onClick={logout} title="Sign out">↪</button></span></header>
+          <div aria-live="polite" className="quote-strip"><span>✦</span><span className="quote-text">{quotes[quoteIndex]}</span><span className="quote-label">A LITTLE INSPIRATION</span></div>
+          <div className="content"><section className="welcome"><div><div className="eyebrow">YOUR DATA SCIENCE ROADMAP　✳</div><h1>{view==="progress"?(teacher?"Class progress overview.":"Shared progress."):(teacher?`${learner.name}’s progress.`:`Good to see you, ${user.name}.`)}</h1><p className="muted">{view==="progress"?(teacher?"Compare Shiv and Prajakta’s overall and module-by-module progress.":"See your progress alongside your friend’s. Peer progress is view-only."):(teacher?`Read-only syllabus and progress for ${learner.name}.`:viewingPeer?`Viewing ${learner.name}’s progress. Their checkboxes are read-only.`:"One topic at a time. You’re building something good.")}</p></div>{view==="syllabus"&&!teacher&&<label className="pill">Viewing　<select aria-label="Choose whose progress to view" value={viewingStudentId} onChange={e=>setViewingStudentId(e.target.value)}>{users.filter(u=>u.id!=="teacher").map(u=><option key={u.id} value={u.id}>{u.id===user.id?`${u.name} (you)`:u.name}</option>)}</select></label>}{view==="syllabus"&&<span className="pill">♧　2025–26 cohort</span>}</section>
+            <section className="summary"><div className="summary-card progress"><div className="sum-label">{teacher&&view==="progress"?"CLASS AVERAGE":"OVERALL PROGRESS"}</div><div className="sum-value">{teacher&&view==="progress"?classAverage:percent}%</div><div className="sum-note">{teacher&&view==="progress"?`${classCompleted} of ${total*studentStats.length} topics completed`:`${completed} of ${total} topics completed`}</div><div className="bar"><span style={{width:`${teacher&&view==="progress"?classAverage:percent}%`}}/></div></div><div className="summary-card"><div className="sum-label">LEARNING PATH</div><div className="sum-value">{modules.length}<small> modules</small></div><div className="sum-note">A thoughtfully ordered curriculum</div></div><div className="summary-card"><div className="sum-label">TOPICS TO EXPLORE</div><div className="sum-value">{teacher&&view==="progress"?total*studentStats.length-classCompleted:total-completed}<small> left to learn</small></div><div className="sum-note">Every checkmark is a small win</div></div></section>
+            {view==="progress"?<section>
+              <div className="progress-intro"><div><div className="eyebrow">SIDE-BY-SIDE COMPARISON</div><h2>How we’re getting on</h2></div><span className="read-only-tag">{teacher?"Teacher overview":"Everyone’s progress is visible"}</span></div>
+              <div className="comparison-grid">{studentStats.map(student=><article className="comparison-card" key={student.id}><div className="comparison-card-head"><span className={`avatar ${student.tone}`}>{student.initials}</span><strong>{student.name}</strong><span className="comparison-percent">{student.percent}%</span></div><div className="sum-note">{student.completed} of {total} topics completed</div><div className="bar"><span style={{width:`${student.percent}%`}}/></div><div className="comparison-modules">{student.modules.map(module=><div className="comparison-module" key={module.id}><span>{module.title}</span><div className="bar"><span style={{width:`${module.percent}%`}}/></div><strong>{module.percent}%</strong></div>)}</div></article>)}</div>
+              <div className="analytics-grid"><article className="chart-card"><h3>Overall completion</h3><p>Percentage of the full syllabus completed</p><div className="chart-legend"><span><i className="legend-dot"></i>Shiv</span><span><i className="legend-dot legend-prajakta"></i>Prajakta</span></div><div className="chart-wrap"><canvas aria-label="Bar chart comparing overall completion for Shiv and Prajakta" ref={overallChartRef} role="img"></canvas></div></article><article className="chart-card"><h3>Progress by module</h3><p>Compare each learner’s completion percentage for every module</p><div className="chart-legend"><span><i className="legend-dot"></i>Shiv</span><span><i className="legend-dot legend-prajakta"></i>Prajakta</span></div><div className="chart-wrap"><canvas aria-label="Radar chart comparing Shiv and Prajakta module progress" ref={moduleChartRef} role="img"></canvas></div></article></div>
+            </section>:<section><div className="section-head"><div><div className="eyebrow">THE CURRICULUM</div><h2>The syllabus　<small style={{fontSize:10,color:"#92978f"}}>{modules.length} modules</small></h2></div><div className="tools"><input className="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="⌕  Find a topic…"/>{!teacher&&<span className="muted">✎ Editable</span>}</div></div>
+              {filtered.length?<div className="cards">{filtered.map(m=>{const index=modules.findIndex(x=>x.id===m.id);const moduleDone=m.topics.filter(t=>done.includes(t.id)).length;return <article className="card" id={m.id} key={m.id}><div className="card-head"><div className={`card-icon ${m.color}`}>{m.icon}</div><div className="card-title"><small>MODULE {String(index+1).padStart(2,"0")}</small><h3><button className="module-title-button" aria-expanded={!!expandedCards[m.id]} onClick={()=>setExpandedCards(current=>({...current,[m.id]:!current[m.id]}))}>{m.title}</button></h3><p>{m.description}</p></div></div><div className="bar"><span style={{width:`${m.topics.length?Math.round(moduleDone/m.topics.length*100):0}%`}}/></div>
+                {expandedCards[m.id]&&<div className="module-topics">{m.topics.map(t=><div className={`topic ${done.includes(t.id)?"done":""}`} key={t.id}><input type="checkbox" checked={done.includes(t.id)} disabled={teacher||viewingPeer} onChange={()=>toggle(t.id)} aria-label={`Mark ${t.title} complete`}/>{editing===t.id&&!teacher&&!viewingPeer?<><input className="edit-input" value={editValue} onChange={e=>setEditValue(e.target.value)} onKeyDown={e=>e.key==="Enter"&&rename(m.id,t.id)} autoFocus/><button className="small-button" onClick={()=>rename(m.id,t.id)}>✓</button><button className="small-button" onClick={()=>setEditing(null)}>×</button></>:<><span>{t.title}</span>{!teacher&&!viewingPeer&&<><button className="small-button" title="Rename topic" onClick={()=>{setEditing(t.id);setEditValue(t.title);}}>✎</button><button className="small-button" title="Delete topic" onClick={()=>remove(m.id,t.id)}>×</button></>}</>}</div>)}
+                {!teacher&&!viewingPeer&&<form className="add-row" onSubmit={e=>{e.preventDefault();add(m.id);}}><input value={newTopic[m.id]||""} onChange={e=>setNewTopic(v=>({...v,[m.id]:e.target.value}))} placeholder="Add a topic…"/><button className="action" type="submit">＋ Add</button></form>}</div>}
+              </article>;})}</div>:<div className="empty">No matching topics. Try another search.</div>}
+            </section>}<footer className="demo" style={{textAlign:"center"}}>Made for the long way round. Keep going ✳</footer>
+          </div>
+        </main>
+      </div>;
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  </script>
+</body>
+</html>
