@@ -81,8 +81,10 @@
     .topic { display:flex;align-items:center;gap:9px;min-height:37px;border-bottom:1px solid #f0f1ed;font-size:11px;color:#60665e; }
     .topic:last-child { border-bottom:0; }
     .topic input { accent-color:#6f9978;width:15px;height:15px;margin:0; }
-    .topic.done span { color:#9da29b;text-decoration:line-through; }
-    .topic span { flex:1; }
+    .topic.done .topic-copy > span { color:#9da29b;text-decoration:line-through; }
+    .topic-copy { flex:1;min-width:0;display:grid;gap:3px; }
+    .topic-copy > span { flex:none; }
+    .topic-copy small { color:#969d93;font-size:9px;line-height:1.3; }
     .small-button { border:0;background:transparent;color:#858d82;padding:5px;font-size:12px; }
     .small-button:hover { color:#a34d46; }
     .add-row { display:flex;gap:5px;margin-top:8px; }
@@ -91,6 +93,8 @@
     .login-page { min-height:100vh;display:grid;place-items:center;padding:24px; }
     .login-card { width:min(100%,410px);background:white;border:1px solid #e8ebe4;border-radius:12px;padding:30px;box-shadow:0 14px 45px #3643330f; }
     .login-card h1 { margin:14px 0 8px; }
+    .password-form input { width:100%;height:40px;padding:0 10px;border:1px solid #e5e8e1;border-radius:6px;background:white;color:#30362f; }
+    .password-error { margin:8px 0 0;color:#a24f46;font-size:10px; }
     .account-list { display:grid;gap:7px;margin:17px 0; }
     .account { width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:9px;border:1px solid #e9ebe5;border-radius:7px;background:white;color:#444a42; }
     .account.selected { border-color:#99b197;background:#f7faf6; }
@@ -211,68 +215,109 @@
       "Learning never exhausts the mind. — Leonardo da Vinci",
       "Success is the sum of small efforts, repeated day in and day out. — Robert Collier"
     ];
+    const syllabusTopic=(title,status,dueDate="")=>({title,status,dueDate});
     const starter = [
-      { id:"python",title:"Python Fundamentals & Core Libraries",description:"Learn Python, programming fundamentals, and the core libraries used in data science.",icon:"⌘",color:"",topics:[
-        "Variables & data types: integers, floats, strings, booleans, type casting","Operators: arithmetic, comparison, logical, assignment","Control flow: if, elif, else","Loops: for, while, break, continue, pass","Input/output: print(), input(), formatted strings (f-strings)",
-        "Lists: indexing, slicing, append, extend, pop, sort","Tuples: immutability, packing, unpacking","Dictionaries: key-value pairs, keys(), values(), items(), get()","Sets: union, intersection, difference","Comprehensions: list, dictionary, and set",
-        "User-defined functions: def, positional/keyword/default arguments, *args, **kwargs, return","Lambda functions and functional tools: map(), filter(), reduce()","Built-in functions: len(), range(), zip(), enumerate(), sorted()","Modules & packages: imports, creating modules, __name__ == \"__main__\"",
-        "Classes & objects: __init__, instance attributes, methods","Inheritance: single, multiple, multilevel","Polymorphism: method overloading and overriding","Encapsulation: private and public attributes","File handling: open(), read(), write(), append(), context managers","Exceptions: try, except, else, finally, custom exceptions",
-        "NumPy: arrays, indexing, broadcasting, vectorized operations, mathematical functions","Pandas Series, DataFrames, CSV/Excel loading, loc/iloc, filtering, groupby, merging/joining","Matplotlib: line plots, bar charts, histograms, scatter plots, subplots","Seaborn: statistical plots, heatmaps, pairplots, boxplots"
-      ] },
-      { id:"database",title:"SQL & Database Management",description:"Understand relational databases and query, transform, and optimize data with SQL.",icon:"▦",color:"amber",topics:[
-        "Relational concepts: tables, rows, columns, primary keys, foreign keys","Database design: normalization (1NF, 2NF, 3NF), ER diagrams","SQL vs NoSQL: when to use each, overview of NoSQL databases",
-        "Basic queries: SELECT, FROM, WHERE, DISTINCT, LIMIT","Filtering: AND, OR, NOT, IN, BETWEEN, LIKE, IS NULL","Sorting: ORDER BY (ASC/DESC), multiple columns","Aggregation: COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING",
-        "Joins: INNER, LEFT, RIGHT, FULL OUTER, CROSS, self-joins","Subqueries: correlated and non-correlated, EXISTS, ANY, ALL","Common Table Expressions: WITH clause, recursive CTEs","Window functions: ROW_NUMBER(), RANK(), DENSE_RANK(), LAG(), LEAD(), SUM() OVER()","Set operations: UNION, UNION ALL, INTERSECT, EXCEPT","Data manipulation: INSERT, UPDATE, DELETE, CREATE TABLE, ALTER TABLE",
-        "Indexing: clustered vs non-clustered indexes, when to use indexes","Query optimization: execution plans, avoiding full table scans","Transactions: ACID properties, COMMIT, ROLLBACK"
-      ] },
-      { id:"statistics",title:"Mathematics & Statistics for Data Science",description:"Build the mathematical backbone for understanding and developing machine learning models.",icon:"∑",color:"purple",topics:[
-        "Central tendency: mean, median, mode","Dispersion: range, variance, standard deviation, interquartile range (IQR)","Data distributions: histograms, boxplots, skewness, kurtosis",
-        "Probability theory: sample spaces, events, conditional probability, Bayes' theorem","Discrete distributions: Binomial, Poisson","Continuous distributions: Normal, Uniform, Exponential","Random variables: expected value, variance, covariance, correlation",
-        "Sampling: simple random, stratified, cluster sampling","Central Limit Theorem: sampling distributions, standard error","Confidence intervals: means and proportions","Hypothesis testing: null/alternative hypotheses, Type I/II errors, p-values","Statistical tests: t-tests, chi-square tests, ANOVA",
-        "Linear algebra: vectors, matrices, matrix operations, dot products, eigenvalues/eigenvectors","Calculus: derivatives, partial derivatives, gradients, chain rule, optimization basics"
-      ] },
-      { id:"data-wrangling",title:"Data Wrangling & Exploratory Data Analysis",description:"Clean, transform, and explore data to uncover patterns and insights.",icon:"▤",color:"blue",topics:[
-        "Missing values: imputation and deletion","Data cleaning: duplicate removal, data type conversion","Outlier detection: Z-score, IQR method, robust measures","Data transformation: Min-Max and Standard scaling, normalization, log transformation","Categorical encoding: one-hot, label, ordinal encoding","Feature engineering: interaction terms, polynomial features, binning/discretization",
-        "Univariate analysis: distribution plots, summary statistics, frequency tables","Bivariate analysis: scatter plots, correlation matrices, cross-tabulations","Multivariate analysis: pair plots, heatmaps, 3D scatter plots","Introductory dimensionality reduction: Principal Component Analysis (PCA)"
-      ] },
-      { id:"visualization",title:"Data Visualization & Storytelling",description:"Communicate useful data insights through effective visualizations and narratives.",icon:"▥",color:"rose",topics:[
-        "Matplotlib: customize titles, labels, legends, colors, and save figures","Seaborn: regression, distribution, and categorical plots","Plotly: interactive visualizations, dashboards, 3D plots","Power BI: data import, data modeling, DAX basics, dashboard creation","Tableau: data connections, worksheets, dashboards","Excel: pivot tables, charts, basic statistical functions",
-        "Effective visualization: choosing chart types, color theory, avoiding misleading graphs","Narrative structure: context, key findings, actionable recommendations","Dashboard design: layout, interactivity, KPIs, real-time dashboards"
-      ] },
-      { id:"machine-learning",title:"Classical Machine Learning",description:"Learn core algorithms for supervised and unsupervised learning.",icon:"◎",color:"teal",topics:[
-        "Learning types: supervised, unsupervised, semi-supervised, reinforcement learning","Train/test split: holdout method, k-fold and stratified cross-validation","Bias-variance tradeoff: underfitting, overfitting, L1/L2 regularization",
-        "Linear regression: simple and multiple regression, assumptions, residual analysis","Regularized regression: Ridge (L2), Lasso (L1), Elastic Net","Regression metrics: MSE, RMSE, MAE, R-squared, Adjusted R-squared",
-        "Logistic regression: sigmoid function, odds ratio, decision boundary","k-Nearest Neighbors: distance metrics, choosing k","Decision trees: entropy, Gini impurity, information gain, pruning","Ensembles: Random Forest, Gradient Boosting, XGBoost, bagging, boosting","Support Vector Machines: hyperplanes, linear/RBF/polynomial kernels","Naive Bayes: Gaussian, Multinomial, Bernoulli","Classification metrics: accuracy, precision, recall, F1, ROC-AUC, confusion matrix",
-        "Clustering: K-Means, hierarchical clustering, DBSCAN","Dimensionality reduction: PCA, t-SNE, UMAP","Association rules: Apriori, Market Basket Analysis"
-      ] },
-      { id:"advanced-ml",title:"Advanced Machine Learning & Deep Learning",description:"Explore neural networks and specialist applications in NLP, vision, and time series.",icon:"⌘",color:"mint",topics:[
-        "Perceptrons: single-layer perceptron, ReLU/Sigmoid/Tanh activation functions","Feedforward neural networks: forward propagation, backpropagation, gradient descent","Deep learning regularization: dropout, batch normalization, early stopping",
-        "CNNs: convolution, pooling, padding, stride, image classification","RNNs: LSTM, GRU, sequence modeling","Transformers: attention, BERT, GPT, transfer learning",
-        "Text preprocessing: tokenization, stemming, lemmatization, stopword removal","Text representation: Bag-of-Words, TF-IDF, Word2Vec, GloVe embeddings","NLP tasks: sentiment analysis, named entity recognition, text classification",
-        "Time series components: trend, seasonality, cyclicity, noise","Forecasting: ARIMA, SARIMA, Exponential Smoothing, Prophet","Time series features: lag features, rolling statistics, date-time features"
-      ] },
-      { id:"big-data",title:"Big Data & Cloud Computing",description:"Prepare to process large-scale data in cloud environments.",icon:"▦",color:"amber",topics:[
-        "Hadoop ecosystem: HDFS, MapReduce, YARN","Apache Spark: RDDs, DataFrames, Spark SQL, PySpark","Data warehousing: Snowflake, Redshift, BigQuery concepts",
-        "AWS: S3, EC2, Lambda, SageMaker, Glue","Google Cloud Platform: BigQuery, Dataflow, AI Platform","Microsoft Azure: Azure ML, Blob Storage, Data Factory",
-        "ETL pipelines: extract, transform, load, Airflow orchestration","Data lakes vs data warehouses: architecture and use cases","Streaming data: Kafka, Spark Streaming, real-time analytics"
-      ] },
-      { id:"mlops",title:"MLOps & Model Deployment",description:"Take machine learning models from development into production.",icon:"▤",color:"blue",topics:[
-        "ML APIs: Flask, FastAPI, RESTful endpoints","Containerization: Docker, Docker Compose, containerizing ML models","Cloud deployment: AWS SageMaker, GCP AI Platform, Azure ML",
-        "CI/CD for ML: automated testing, versioning, continuous training","Model monitoring: performance tracking, drift detection, retraining triggers","Version control: Git, GitHub, branching strategies, pull requests",
-        "Explainability: SHAP, LIME, feature importance, partial dependence plots","Fairness and bias: detecting and mitigating bias in ML models"
-      ] },
-      { id:"capstone",title:"Capstone Projects & Portfolio",description:"Bring your skills together in end-to-end projects and a professional portfolio.",icon:"✦",color:"purple",topics:[
-        "Regression projects: house price prediction, sales forecasting","Classification projects: customer churn prediction, fraud detection","NLP projects: sentiment analysis, text summarization, chatbot","Time series projects: stock price forecasting, demand prediction","Recommendation systems: collaborative filtering, content-based filtering",
-        "Problem definition: business understanding, success metrics","Data collection and preparation: sourcing, cleaning, feature engineering","Modeling and evaluation: algorithm selection, hyperparameter tuning, validation","Deployment and presentation: model deployment, report/dashboard, presenting findings",
-        "GitHub portfolio: project documentation, README files, code quality","Kaggle competitions: participation, learning from others","Blog writing: explain projects and insights through technical writing"
-      ] }
-    ].map(m=>({...m,topics:m.topics.map((title,i)=>({id:`${m.id}-${i+1}`,title}))}));
-    const keys={modules:"fieldnotes-syllabus-v2",progress:"fieldnotes-progress-v2",session:"fieldnotes-session-v1",theme:"data-science-course-theme-v1"};
+      {id:"programming-foundation",title:"Programming Foundation",description:"Build core programming, version control, and clean project habits.",icon:"⌘",color:"",topics:[
+        syllabusTopic("Python basics: variables, loops, functions, lists, dicts, sets, tuples","Completed"),
+        syllabusTopic("Python OOP: classes, objects, inheritance, polymorphism","Completed"),
+        syllabusTopic("Python advanced: decorators, generators, comprehensions, lambda, map/filter, exception handling, file handling, modules, virtual env","Completed"),
+        syllabusTopic("Git basics: init, add, commit, push, pull, branches","Completed"),
+        syllabusTopic("GitHub: repos, README, clone, pull requests","Completed"),
+        syllabusTopic("Tkinter GUI basics","Completed"),
+        syllabusTopic("Clean coding + project structure","Due","2026-10-20")
+      ]},
+      {id:"sql",title:"SQL",description:"Practice querying, transforming, and optimizing relational data.",icon:"▦",color:"amber",topics:[
+        syllabusTopic("Basic SQL: SELECT, WHERE, GROUP BY, ORDER BY, JOINs, basic subqueries","Completed"),
+        syllabusTopic("Advanced SQL: window functions — ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, SUM OVER","Due","2026-10-18"),
+        syllabusTopic("CTEs and recursive CTEs","Due","2026-10-18"),syllabusTopic("Pivoting / unpivoting","Due","2026-10-20"),
+        syllabusTopic("Date/time functions, string functions","Due","2026-10-20"),syllabusTopic("Query optimization, indexing, execution plans","Due","2026-10-22"),
+        syllabusTopic("SQL practice: LeetCode / HackerRank / StrataScratch — 50+ problems","Due","2026-10-31")
+      ]},
+      {id:"python-data-stack",title:"Python Data Stack",description:"Use Python's core data libraries to manipulate and visualize data.",icon:"▤",color:"blue",topics:[
+        syllabusTopic("NumPy: arrays, broadcasting, vectorization, indexing","Completed"),
+        syllabusTopic("Pandas: Series, DataFrame, read_csv, groupby, merge, pivot, apply","Completed"),
+        syllabusTopic("Matplotlib basics","Due","2026-10-28"),syllabusTopic("Seaborn: statistical plots, heatmaps, pairplots","Due","2026-10-28"),
+        syllabusTopic("Plotly: interactive charts","Due","2026-10-30"),syllabusTopic("Advanced Pandas: time series, window functions, memory optimization","Due","2026-10-30")
+      ]},
+      {id:"mathematics",title:"Mathematics for Data Science",description:"Develop the statistical, linear algebra, and calculus foundations for data science.",icon:"∑",color:"purple",topics:[
+        syllabusTopic("Mean, median, mode","Completed"),syllabusTopic("Standard deviation, variance","Completed"),syllabusTopic("Eigenvalues and eigenvectors","Completed"),
+        syllabusTopic("Probability basics: conditional probability, Bayes theorem","Due","2026-10-16"),syllabusTopic("Distributions: normal, binomial, Poisson","Due","2026-10-18"),
+        syllabusTopic("CLT, sampling, confidence intervals","Due","2026-10-20"),syllabusTopic("Hypothesis testing, p-value, t-test, chi-square, ANOVA","Due","2026-10-24"),
+        syllabusTopic("A/B testing","Due","2026-10-25"),syllabusTopic("Correlation vs causation","Due","2026-10-25"),
+        syllabusTopic("Linear algebra: matrix operations, norms, SVD, projections","Due","2026-10-27"),
+        syllabusTopic("Calculus: derivatives, partial derivatives, chain rule, gradients","Due","2026-10-29"),
+        syllabusTopic("Optimization: gradient descent, learning rate","Due","2026-10-31")
+      ]},
+      {id:"data-analysis",title:"Data Analysis / EDA",description:"Prepare, engineer, and explore datasets while avoiding common analysis pitfalls.",icon:"▤",color:"blue",topics:[
+        syllabusTopic("Missing values, outliers, duplicates","Due","2026-10-26"),syllabusTopic("Feature engineering, encoding, scaling","Due","2026-10-28"),
+        syllabusTopic("Data leakage, train/validation/test split","Due","2026-10-29"),syllabusTopic("Advanced EDA: groupby, merge, pivot, apply, time series","Due","2026-10-30"),
+        syllabusTopic("EDA case study on real dataset","Due","2026-11-02")
+      ]},
+      {id:"visualization-bi",title:"Visualization and BI",description:"Tell clear stories with visualizations, spreadsheets, and dashboards.",icon:"▥",color:"rose",topics:[
+        syllabusTopic("Matplotlib / Seaborn / Plotly revision","Due","2026-11-02"),syllabusTopic("Power BI or Tableau basics","Due","2026-11-05"),
+        syllabusTopic("Dashboard building","Due","2026-11-08"),syllabusTopic("Excel for analytics: formulas, pivot tables, XLOOKUP, charts","Due","2026-10-25")
+      ]},
+      {id:"machine-learning",title:"Machine Learning",description:"Learn, evaluate, and tune machine learning models with practical workflows.",icon:"◎",color:"teal",topics:[
+        syllabusTopic("Linear regression","Due","2026-11-04"),syllabusTopic("Logistic regression","Due","2026-11-05"),syllabusTopic("KNN, SVM, Naive Bayes","Due","2026-11-07"),
+        syllabusTopic("Decision trees, random forest","Due","2026-11-09"),syllabusTopic("Gradient boosting, XGBoost, LightGBM","Due","2026-11-12"),
+        syllabusTopic("Clustering: K-Means, hierarchical","Due","2026-11-13"),syllabusTopic("PCA / dimensionality reduction","Due","2026-11-14"),
+        syllabusTopic("Model evaluation: accuracy, precision, recall, F1, ROC-AUC, RMSE, MAE","Due","2026-11-16"),
+        syllabusTopic("Cross-validation, hyperparameter tuning","Due","2026-11-18"),syllabusTopic("Scikit-learn pipelines","Due","2026-11-20")
+      ]},
+      {id:"deep-learning",title:"Deep Learning",description:"Get basic exposure to neural networks and deep learning architectures by December 2026.",icon:"⌘",color:"",topics:[
+        syllabusTopic("Neural networks, activation functions, backpropagation","Due","2026-11-25"),syllabusTopic("CNN basics","Due","2026-11-27"),
+        syllabusTopic("RNN, LSTM basics","Due","2026-11-29"),syllabusTopic("Transformers basics","Due","2026-12-01"),
+        syllabusTopic("PyTorch or TensorFlow basic","Due","2026-12-03")
+      ]},
+      {id:"nlp",title:"NLP",description:"Build basic familiarity with text processing and transformer tooling.",icon:"▤",color:"purple",topics:[
+        syllabusTopic("Text preprocessing, TF-IDF, word embeddings","Due","2026-12-05"),syllabusTopic("Transformer basics, Hugging Face intro","Due","2026-12-07")
+      ]},
+      {id:"time-series",title:"Time Series",description:"Get a basic introduction to time-series analysis and forecasting.",icon:"↗",color:"blue",topics:[
+        syllabusTopic("Stationarity, lag features","Due","2026-12-08"),syllabusTopic("ARIMA, SARIMA, Prophet","Due","2026-12-10")
+      ]},
+      {id:"deployment-mlops",title:"Deployment and MLOps",description:"Learn the foundations of serving, packaging, and tracking machine learning systems.",icon:"▤",color:"blue",topics:[
+        syllabusTopic("Streamlit / Flask / FastAPI","Due","2026-12-12"),syllabusTopic("Docker basics","Due","2026-12-14"),
+        syllabusTopic("Cloud basics: AWS / GCP / Azure","Due","2026-12-16"),syllabusTopic("MLflow, GitHub Actions","Due","2026-12-18")
+      ]},
+      {id:"big-data",title:"Big Data — optional/basic",description:"Explore introductory big-data tools as an optional learning path.",icon:"▦",color:"amber",topics:[
+        syllabusTopic("PySpark basics","Due","2026-12-20"),syllabusTopic("SQL on Spark, Databricks intro","Due","2026-12-22")
+      ]},
+      {id:"dsa-interviews",title:"DSA for Interviews",description:"Weekend-only interview practice for 2–3 hours; no due date.",icon:"◎",color:"teal",topics:[
+        syllabusTopic("Arrays, strings, hashmaps","Weekend practice"),syllabusTopic("Sorting, searching","Weekend practice"),
+        syllabusTopic("Recursion, two pointers, sliding window","Weekend practice"),syllabusTopic("Basic DP","Weekend practice"),
+        syllabusTopic("LeetCode easy/medium — 100 problems","Weekend practice")
+      ]},
+      {id:"projects",title:"Projects",description:"Apply your learning through portfolio projects; no due dates.",icon:"✦",color:"purple",topics:[
+        syllabusTopic("Billing system using SQL, Python, Tkinter","Completed"),syllabusTopic("Project 1: EDA + Dashboard","Pending"),
+        syllabusTopic("Project 2: ML end-to-end + Streamlit deployment","Pending"),
+        syllabusTopic("Project 3: NLP / Time Series / Recommendation","Pending")
+      ]}
+    ].map(m=>({...m,topics:m.topics.map((topic,i)=>({...topic,id:`${m.id}-${i+1}`}))}));
+    const initialProgress=Object.fromEntries(["shiv","prajakta"].map(id=>[id,starter.flatMap(m=>m.topics.filter(t=>t.status==="Completed").map(t=>t.id))]));
+    const keys={modules:"fieldnotes-syllabus-v3",progress:"fieldnotes-progress-v3",session:"fieldnotes-session-v1",theme:"data-science-course-theme-v1"};
+    const sitePassword="jalna@123";
     function load(key,fallback) { try { const value=localStorage.getItem(key); return value?JSON.parse(value):fallback; } catch(error) { console.warn("Could not read saved tracker data:",error); return fallback; } }
-    function App() {
+    function PasswordGate({onUnlock}) {
+      const [password,setPassword]=useState("");
+      const [error,setError]=useState("");
+      function submit(event) {
+        event.preventDefault();
+        if(password!==sitePassword) { setError("That password is incorrect. Please try again.");return; }
+        onUnlock();
+      }
+      return <main className="login-page"><form className="login-card" onSubmit={submit}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}><div className="brand"><span className="brand-mark">▤</span><span>Data Science Course</span></div></div>
+        <h1>Welcome back.</h1><p className="muted">Enter the site password to continue.</p>
+        <label className="field-label" htmlFor="site-password">Password</label>
+        <div className="password-form"><input autoComplete="current-password" autoFocus id="site-password" onChange={event=>{setPassword(event.target.value);setError("");}} type="password" value={password}/></div>
+        {error&&<p className="password-error" role="alert">{error}</p>}
+        <button className="submit" type="submit">Unlock website →</button>
+      </form></main>;
+    }
+    function TrackerApp() {
       const [user,setUser]=useState(()=>{const saved=load(keys.session,null);if(!saved)return null;const account=users.find(u=>u.id===saved.id);return account?{id:account.id,name:account.name,role:account.role,initials:account.initials,tone:account.tone}:null;});
       const [modules,setModules]=useState(()=>load(keys.modules,starter));
-      const [progress,setProgress]=useState(()=>load(keys.progress,{}));
+      const [progress,setProgress]=useState(()=>load(keys.progress,initialProgress));
       const [selected,setSelected]=useState(users[0]);
       const [query,setQuery]=useState("");
       const [view,setView]=useState(()=>user?.id==="teacher"?"progress":"syllabus");
@@ -326,7 +371,6 @@
         <label className="field-label">Choose your account</label>
         <div className="account-list">{users.map(u=><button type="button" key={u.id} className={`account ${selected.id===u.id?"selected":""}`} onClick={()=>setSelected(u)}><span className={`avatar ${u.tone}`}>{u.initials}</span><span><strong>{u.name}</strong><small>{u.role}</small></span>{selected.id===u.id?"✓":""}</button>)}</div>
         <button className="submit" type="submit">Continue as {selected.name} →</button>
-        <p className="demo">No password is required. This demo profile picker does not restrict access to account data.</p>
       </form></main>;
       const teacher=user.id==="teacher";
       const learner=users.find(u=>u.id===viewingStudentId)||user;
@@ -346,14 +390,14 @@
       const classAverage=studentStats.length?Math.round(studentStats.reduce((sum,student)=>sum+student.percent,0)/studentStats.length):0;
       const classCompleted=studentStats.reduce((sum,student)=>sum+student.completed,0);
       function toggle(topicId){setProgress(current=>{const list=current[user.id]||[];return {...current,[user.id]:list.includes(topicId)?list.filter(id=>id!==topicId):[...list,topicId]};});}
-      function add(moduleId){const title=(newTopic[moduleId]||"").trim();if(!title)return;setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:[...m.topics,{id:`${moduleId}-${Date.now()}`,title}]}:m));setNewTopic(v=>({...v,[moduleId]:""}));}
+      function add(moduleId){const title=(newTopic[moduleId]||"").trim();if(!title)return;setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:[...m.topics,{id:`${moduleId}-${Date.now()}`,title,status:"Pending",dueDate:""}]}:m));setNewTopic(v=>({...v,[moduleId]:""}));}
       function rename(moduleId,topicId){const title=editValue.trim();if(title)setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:m.topics.map(t=>t.id===topicId?{...t,title}:t)}:m));setEditing(null);}
       function remove(moduleId,topicId){setModules(ms=>ms.map(m=>m.id===moduleId?{...m,topics:m.topics.filter(t=>t.id!==topicId)}:m));setProgress(p=>Object.fromEntries(Object.entries(p).map(([id,list])=>[id,list.filter(t=>t!==topicId)])));}
       return <div className="wrap">
         <aside className={`sidebar ${mobileMenu?"sidebar-open":""}`}><div className="brand"><span className="brand-mark">▤</span><span>Data Science Course</span></div>
           <div className="side-label">YOUR WORKSPACE</div><div className="workspace"><span className="workspace-mark">ds</span><span><strong>Data Science</strong><small>Learning path</small></span></div>
           <div className="side-label">LEARN</div><nav className="nav"><button className={view==="syllabus"?"active":""} onClick={()=>{setView("syllabus");setMobileMenu(false);}}>▤　 Syllabus</button><button className={view==="progress"?"active":""} onClick={()=>{setView("progress");setMobileMenu(false);}}>↗　 {teacher?"Class progress":"Shared progress"} <span style={{float:"right"}}>{teacher&&view==="progress"?classAverage:percent}%</span></button></nav>
-          <div className="side-label">YOUR MODULES</div><nav className="module-nav">{modules.map((m,i)=><div className="module-nav-group" key={m.id}><button aria-expanded={!!expandedModules[m.id]} onClick={()=>setExpandedModules(current=>({...current,[m.id]:!current[m.id]}))}><span className={`dot ${m.color}`}></span>{String(i+1).padStart(2,"0")}　{m.title}</button>{expandedModules[m.id]&&<div className="module-subtopics">{m.topics.map(topic=><button key={topic.id} onClick={()=>{setView("syllabus");setExpandedCards(current=>({...current,[m.id]:true}));setMobileMenu(false);window.requestAnimationFrame(()=>document.getElementById(m.id)?.scrollIntoView({behavior:"smooth",block:"center"}));}}>{topic.title}</button>)}</div>}</div>)}</nav>
+          <div className="side-label">YOUR MODULES</div><nav className="module-nav">{modules.map((m,i)=><div className="module-nav-group" key={m.id}><button aria-expanded={!!expandedModules[m.id]} onClick={()=>setExpandedModules(current=>({...current,[m.id]:!current[m.id]}))}><span className={`dot ${m.color}`}></span>{String(i).padStart(2,"0")}　{m.title}</button>{expandedModules[m.id]&&<div className="module-subtopics">{m.topics.map(topic=><button key={topic.id} onClick={()=>{setView("syllabus");setExpandedCards(current=>({...current,[m.id]:true}));setMobileMenu(false);window.requestAnimationFrame(()=>document.getElementById(m.id)?.scrollIntoView({behavior:"smooth",block:"center"}));}}>{topic.title}</button>)}</div>}</div>)}</nav>
           <div className="sidebar-bottom"><div className="tip">✳　<strong>Small steps count.</strong><br/>　　 Consistency beats cramming, every time.</div><div className="who"><span className={`avatar ${user.tone}`}>{user.initials}</span><span><strong>{user.name}</strong><small>{user.role}</small></span><button className="logout" onClick={logout} title="Sign out">↪</button></div></div>
         </aside>
         {mobileMenu&&<button aria-label="Close menu" className="mobile-scrim" onClick={()=>setMobileMenu(false)} type="button"/>}
@@ -366,14 +410,18 @@
               <div className="comparison-grid">{studentStats.map(student=><article className="comparison-card" key={student.id}><div className="comparison-card-head"><span className={`avatar ${student.tone}`}>{student.initials}</span><strong>{student.name}</strong><span className="comparison-percent">{student.percent}%</span></div><div className="sum-note">{student.completed} of {total} topics completed</div><div className="bar"><span style={{width:`${student.percent}%`}}/></div><div className="comparison-modules">{student.modules.map(module=><div className="comparison-module" key={module.id}><span>{module.title}</span><div className="bar"><span style={{width:`${module.percent}%`}}/></div><strong>{module.percent}%</strong></div>)}</div></article>)}</div>
               <div className="analytics-grid"><article className="chart-card"><h3>Overall completion</h3><p>Percentage of the full syllabus completed</p><div className="chart-legend"><span><i className="legend-dot"></i>Shiv</span><span><i className="legend-dot legend-prajakta"></i>Prajakta</span></div><div className="chart-wrap"><canvas aria-label="Bar chart comparing overall completion for Shiv and Prajakta" ref={overallChartRef} role="img"></canvas></div></article><article className="chart-card"><h3>Progress by module</h3><p>Compare each learner’s completion percentage for every module</p><div className="chart-legend"><span><i className="legend-dot"></i>Shiv</span><span><i className="legend-dot legend-prajakta"></i>Prajakta</span></div><div className="chart-wrap"><canvas aria-label="Radar chart comparing Shiv and Prajakta module progress" ref={moduleChartRef} role="img"></canvas></div></article></div>
             </section>:<section><div className="section-head"><div><div className="eyebrow">THE CURRICULUM</div><h2>The syllabus　<small style={{fontSize:10,color:"#92978f"}}>{modules.length} modules</small></h2></div><div className="tools"><input className="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="⌕  Find a topic…"/>{!teacher&&<span className="muted">✎ Editable</span>}</div></div>
-              {filtered.length?<div className="cards">{filtered.map(m=>{const index=modules.findIndex(x=>x.id===m.id);const moduleDone=m.topics.filter(t=>done.includes(t.id)).length;return <article className="card" id={m.id} key={m.id}><div className="card-head"><div className={`card-icon ${m.color}`}>{m.icon}</div><div className="card-title"><small>MODULE {String(index+1).padStart(2,"0")}</small><h3><button className="module-title-button" aria-expanded={!!expandedCards[m.id]} onClick={()=>setExpandedCards(current=>({...current,[m.id]:!current[m.id]}))}>{m.title}</button></h3><p>{m.description}</p></div></div><div className="bar"><span style={{width:`${m.topics.length?Math.round(moduleDone/m.topics.length*100):0}%`}}/></div>
-                {expandedCards[m.id]&&<div className="module-topics">{m.topics.map(t=><div className={`topic ${done.includes(t.id)?"done":""}`} key={t.id}><input type="checkbox" checked={done.includes(t.id)} disabled={teacher||viewingPeer} onChange={()=>toggle(t.id)} aria-label={`Mark ${t.title} complete`}/>{editing===t.id&&!teacher&&!viewingPeer?<><input className="edit-input" value={editValue} onChange={e=>setEditValue(e.target.value)} onKeyDown={e=>e.key==="Enter"&&rename(m.id,t.id)} autoFocus/><button className="small-button" onClick={()=>rename(m.id,t.id)}>✓</button><button className="small-button" onClick={()=>setEditing(null)}>×</button></>:<><span>{t.title}</span>{!teacher&&!viewingPeer&&<><button className="small-button" title="Rename topic" onClick={()=>{setEditing(t.id);setEditValue(t.title);}}>✎</button><button className="small-button" title="Delete topic" onClick={()=>remove(m.id,t.id)}>×</button></>}</>}</div>)}
+              {filtered.length?<div className="cards">{filtered.map(m=>{const index=modules.findIndex(x=>x.id===m.id);const moduleDone=m.topics.filter(t=>done.includes(t.id)).length;return <article className="card" id={m.id} key={m.id}><div className="card-head"><div className={`card-icon ${m.color}`}>{m.icon}</div><div className="card-title"><small>MODULE {String(index).padStart(2,"0")}</small><h3><button className="module-title-button" aria-expanded={!!expandedCards[m.id]} onClick={()=>setExpandedCards(current=>({...current,[m.id]:!current[m.id]}))}>{m.title}</button></h3><p>{m.description}</p></div></div><div className="bar"><span style={{width:`${m.topics.length?Math.round(moduleDone/m.topics.length*100):0}%`}}/></div>
+                {expandedCards[m.id]&&<div className="module-topics">{m.topics.map(t=><div className={`topic ${done.includes(t.id)?"done":""}`} key={t.id}><input type="checkbox" checked={done.includes(t.id)} disabled={teacher||viewingPeer} onChange={()=>toggle(t.id)} aria-label={`Mark ${t.title} complete`}/>{editing===t.id&&!teacher&&!viewingPeer?<><input className="edit-input" value={editValue} onChange={e=>setEditValue(e.target.value)} onKeyDown={e=>e.key==="Enter"&&rename(m.id,t.id)} autoFocus/><button className="small-button" onClick={()=>rename(m.id,t.id)}>✓</button><button className="small-button" onClick={()=>setEditing(null)}>×</button></>:<><span className="topic-copy"><span>{t.title}</span><small>{done.includes(t.id)?"Completed":t.status==="Completed"?"Pending":t.dueDate?`Due ${new Date(`${t.dueDate}T00:00:00`).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}`:t.status}</small></span>{!teacher&&!viewingPeer&&<><button className="small-button" title="Rename topic" onClick={()=>{setEditing(t.id);setEditValue(t.title);}}>✎</button><button className="small-button" title="Delete topic" onClick={()=>remove(m.id,t.id)}>×</button></>}</>}</div>)}
                 {!teacher&&!viewingPeer&&<form className="add-row" onSubmit={e=>{e.preventDefault();add(m.id);}}><input value={newTopic[m.id]||""} onChange={e=>setNewTopic(v=>({...v,[m.id]:e.target.value}))} placeholder="Add a topic…"/><button className="action" type="submit">＋ Add</button></form>}</div>}
               </article>;})}</div>:<div className="empty">No matching topics. Try another search.</div>}
             </section>}<footer className="demo" style={{textAlign:"center"}}>Made for the long way round. Keep going ✳</footer>
           </div>
         </main>
       </div>;
+    }
+    function App() {
+      const [unlocked,setUnlocked]=useState(false);
+      return unlocked?<TrackerApp/>:<PasswordGate onUnlock={()=>setUnlocked(true)}/>;
     }
     ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
   </script>
