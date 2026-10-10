@@ -167,6 +167,11 @@ const MODULES_KEY = "fieldnotes-syllabus-v3";
 const PROGRESS_KEY = "fieldnotes-progress-v3";
 const SESSION_KEY = "fieldnotes-session-v1";
 const THEME_KEY = "data-science-course-theme-v1";
+const THEME_CYCLE = ["light", "dark", "pink-black"];
+
+function nextTheme(theme) {
+  return THEME_CYCLE[(THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length];
+}
 const SITE_PASSWORD = "jalna@123";
 
 function readStorage(key, fallback) {
@@ -247,7 +252,7 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
       <header className="login-brand">
         <div className="brand-mark"><BookOpen size={19} strokeWidth={2.2} /></div>
         <span>Data Science Course</span>
-        <button aria-label={`Switch to ${theme === "light" ? "dark" : "bright"} theme`} className="theme-toggle" onClick={onToggleTheme} type="button">{theme === "light" ? "☾" : "☀"}<span>{theme === "light" ? "Dark" : "Bright"}</span></button>
+        <button aria-label={`Switch to ${nextTheme(theme)} theme`} className="theme-toggle" onClick={onToggleTheme} type="button">{theme === "pink-black" ? "♥" : theme === "light" ? "☾" : "☀"}<span>{theme === "light" ? "Dark" : theme === "dark" ? "Pink-black" : "Bright"}</span></button>
       </header>
       <section className="login-card">
         <div className="login-eyebrow"><Sparkles size={14} /> YOUR LEARNING, IN GOOD ORDER</div>
@@ -465,6 +470,9 @@ function Dashboard({ user, onLogout, modules, setModules, progress, setProgress,
   useEffect(() => {
     if (activeNav !== "My progress" || !overallChartRef.current || !moduleChartRef.current) return undefined;
     const colors = ["#72977b", "#a28ab6"];
+    const darkChart = theme !== "light";
+    const chartText = theme === "pink-black" ? "#f2c7df" : "#c1c9bf";
+    const chartGrid = theme === "pink-black" ? "#503348" : "#39433a";
     const overallChart = new Chart(overallChartRef.current, {
       type: "bar",
       data: {
@@ -481,10 +489,10 @@ function Dashboard({ user, onLogout, modules, setModules, progress, setProgress,
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          y: { beginAtZero: true, max: 100, ticks: { stepSize: 25, color: theme === "dark" ? "#c1c9bf" : "#73796f", callback: (value) => `${value}%` }, grid: { color: theme === "dark" ? "#39433a" : "#eef0eb" } },
-          x: { ticks: { color: theme === "dark" ? "#c1c9bf" : "#73796f" }, grid: { display: false } },
+          y: { beginAtZero: true, max: 100, ticks: { stepSize: 25, color: darkChart ? chartText : "#73796f", callback: (value) => `${value}%` }, grid: { color: darkChart ? chartGrid : "#eef0eb" } },
+          x: { ticks: { color: darkChart ? chartText : "#73796f" }, grid: { display: false } },
         },
-        color: theme === "dark" ? "#c1c9bf" : "#73796f",
+        color: darkChart ? chartText : "#73796f",
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (context) => `${context.parsed.y}% complete` } } },
       },
     });
@@ -509,10 +517,10 @@ function Dashboard({ user, onLogout, modules, setModules, progress, setProgress,
           r: {
             beginAtZero: true,
             max: 100,
-            ticks: { color: theme === "dark" ? "#c1c9bf" : "#73796f", stepSize: 25, backdropColor: "transparent", callback: (value) => `${value}%` },
-            grid: { color: theme === "dark" ? "#39433a" : "#e9ece6" },
-            angleLines: { color: theme === "dark" ? "#39433a" : "#e9ece6" },
-            pointLabels: { color: theme === "dark" ? "#c1c9bf" : "#73796f", font: { size: 10 } },
+            ticks: { color: darkChart ? chartText : "#73796f", stepSize: 25, backdropColor: "transparent", callback: (value) => `${value}%` },
+            grid: { color: darkChart ? chartGrid : "#e9ece6" },
+            angleLines: { color: darkChart ? chartGrid : "#e9ece6" },
+            pointLabels: { color: darkChart ? chartText : "#73796f", font: { size: 10 } },
           },
         },
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.parsed.r}%` } } },
@@ -622,7 +630,7 @@ function Dashboard({ user, onLogout, modules, setModules, progress, setProgress,
           <div className="topbar-right">
             {user.id === "teacher" && <span className="observer-badge"><Eye size={13} /> Mentor view</span>}
             <span className="topbar-date"><Clock3 size={14} /> Your own pace</span>
-            <button aria-label={`Switch to ${theme === "light" ? "dark" : "bright"} theme`} className="theme-toggle" onClick={onToggleTheme} type="button">{theme === "light" ? "☾" : "☀"}<span>{theme === "light" ? "Dark" : "Bright"}</span></button>
+            <button aria-label={`Switch to ${nextTheme(theme)} theme`} className="theme-toggle" onClick={onToggleTheme} type="button">{theme === "pink-black" ? "♥" : theme === "light" ? "☾" : "☀"}<span>{theme === "light" ? "Dark" : theme === "dark" ? "Pink-black" : "Bright"}</span></button>
             <button aria-label="Sign out" className="topbar-logout" onClick={onLogout} title="Sign out" type="button"><LogOut size={17} /></button>
           </div>
         </header>
@@ -826,7 +834,10 @@ function CourseApp() {
   const [progress, setProgress] = useState(() => readStorage(PROGRESS_KEY, INITIAL_PROGRESS));
   const [plans, setPlans] = useState(() => readStorage(PLAN_KEY, {}));
   const [activity, setActivity] = useState(() => readStorage(ACTIVITY_KEY, {}));
-  const [theme, setTheme] = useState(() => readStorage(THEME_KEY, "light") === "dark" ? "dark" : "light");
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = readStorage(THEME_KEY, "light");
+    return THEME_CYCLE.includes(savedTheme) ? savedTheme : "light";
+  });
 
   useEffect(() => {
     document.body.dataset.theme = theme;
@@ -854,7 +865,7 @@ function CourseApp() {
 
   function toggleTheme() {
     setTheme((current) => {
-      const next = current === "light" ? "dark" : "light";
+      const next = nextTheme(current);
       document.body.dataset.theme = next;
       localStorage.setItem(THEME_KEY, JSON.stringify(next));
       return next;
